@@ -1,0 +1,29 @@
+spring:
+  mongodb:
+    embedded:
+      version: 3.0.0
+
+  webflux:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+logging:
+  level:
+    web: DEBUG
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  project:
+    version: @project.version@
+  java:
+    version: @java.version@
+  spring:
+    framework:
+      version: @spring-framework.version@
+    data:
+      versioin: @spring-data-bom.version@
