@@ -3,6 +3,7 @@ package com.greglturnquist.hackingspringboot.reactive;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.Rendering;
@@ -32,17 +33,30 @@ public class HomeController {
 //        return Mono.just("home");
 //    }
 
+    private static String cartName(Authentication auth) {
+        return auth.getName() + " Cart";
+    }
+
+//    @GetMapping
+//    Mono<Rendering> home() {
+//        return Mono.just(Rendering.view("home.html")
+//                            .modelAttribute("items", this.itemRepository.findAll().doOnNext(System.out::println))
+//                            .modelAttribute("cart", this.cartRepository.findById("My Cart").defaultIfEmpty(new Cart("My Cart")))
+//                            .build());
+//    }
+
     @GetMapping
-    Mono<Rendering> home() {
+    Mono<Rendering> home(Authentication auth) {
         return Mono.just(Rendering.view("home.html")
-                            .modelAttribute("items", this.itemRepository.findAll().doOnNext(System.out::println))
-                            .modelAttribute("cart", this.cartRepository.findById("My Cart").defaultIfEmpty(new Cart("My Cart")))
-                            .build());
+                .modelAttribute("items", this.inventoryService.getInventory())
+                .modelAttribute("cart", this.inventoryService.getCart(cartName(auth)).defaultIfEmpty(new Cart(cartName(auth))))
+                .modelAttribute("auth", auth)
+                .build());
     }
 
     @PostMapping("/add/{id}")
-    Mono<String> addToCart(@PathVariable String id) {
-        return this.cartService.addToCart("My Cart", id)
+    Mono<String> addToCart(Authentication auth, @PathVariable String id) {
+        return this.inventoryService.addItemToCart(cartName(auth), id)
                 .thenReturn("redirect:/");
 //        return this.cartRepository.findById("My Cart")
 //                .defaultIfEmpty(new Cart("My Cart"))
@@ -63,6 +77,12 @@ public class HomeController {
 //                                    }))
 //                .flatMap(cart -> this.cartRepository.save(cart))
 //                .thenReturn("redirect:/");
+    }
+
+    @PostMapping("/remove/{id}")
+    Mono<String> removeFromCart(Authentication auth, @PathVariable String id) {
+        return this.inventoryService.removeOneFromCart(cartName(auth), id)
+                .thenReturn("redirect:/");
     }
 
     @GetMapping("/search")
