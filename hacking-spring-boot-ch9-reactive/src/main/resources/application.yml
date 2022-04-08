@@ -8,6 +8,14 @@ spring:
       filter:
         enabled: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 494765666736-jchcrc7po8sts2efqr3rrlbtfaubq48i.apps.googleusercontent.com
+            client-secret: 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
+
 logging:
   level:
     web: DEBUG
