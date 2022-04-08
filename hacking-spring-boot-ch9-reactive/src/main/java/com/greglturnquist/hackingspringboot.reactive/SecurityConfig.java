@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.User.UserBuilder;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 
 
 @Configuration
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -58,8 +60,8 @@ public class SecurityConfig {
     SecurityWebFilterChain myCustomSecurityPolicy(ServerHttpSecurity http) { // <1>
         return http //
                 .authorizeExchange(exchanges -> exchanges //
-                        .pathMatchers(HttpMethod.POST, "/").hasRole(INVENTORY) // <2>
-                        .pathMatchers(HttpMethod.DELETE, "/**").hasRole(INVENTORY) //
+                        //.pathMatchers(HttpMethod.POST, "/").hasRole(INVENTORY) // @EnableReactiveMethodSecurity 사용으로 인한 주석 처리
+                        //.pathMatchers(HttpMethod.DELETE, "/**").hasRole(INVENTORY) // @EnableReactiveMethodSecurity 사용으로 인한 주석 처리
                         .anyExchange().authenticated() // <3>
                         .and() //
                         .httpBasic() // <4>
